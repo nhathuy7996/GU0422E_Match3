@@ -20,6 +20,21 @@ public class Tile : MonoBehaviour
         SpriteRenderer = this.GetComponent<SpriteRenderer>();
         _ID = (TypeTile)Random.Range(0, (int)TypeTile.type3+1);
 
+        switch (_ID)
+        {
+            case TypeTile.type1:
+                SpriteRenderer.color = Color.yellow;
+                break;
+
+            case TypeTile.type2:
+                SpriteRenderer.color = Color.blue;
+                break;
+
+            case TypeTile.type3:
+                SpriteRenderer.color = Color.white;
+                break;
+        }
+
         if(_X - 1  > 0)
             _neighbor.Add(TileManager.Instant.getTile(_X - 1, _Y));
         if (_X + 1 < TileManager.Instant._width)
@@ -35,6 +50,15 @@ public class Tile : MonoBehaviour
     {
         _X = (int)index.x;
         _Y = (int)index.y;
+
+        if (_X - 1 > 0)
+            _neighbor.Add(TileManager.Instant.getTile(_X - 1, _Y));
+        if (_X + 1 < TileManager.Instant._width)
+            _neighbor.Add(TileManager.Instant.getTile(_X + 1, _Y));
+        if (_Y - 1 > 0)
+            _neighbor.Add(TileManager.Instant.getTile(_X, _Y - 1));
+        if (_Y + 1 < TileManager.Instant._heigh)
+            _neighbor.Add(TileManager.Instant.getTile(_X, _Y + 1));
     }
 }
 

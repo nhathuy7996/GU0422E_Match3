@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using HuynnLib;
+using System;
 
 public class TileManager : Singleton<TileManager>
 {
@@ -97,38 +98,56 @@ public class TileManager : Singleton<TileManager>
             return;
         }
 
-        
 
-        Vector3 pos1 = _tile1.transform.position;
+        this.SwapTile(_tile1, _tile2, () =>
+        {
+            if (!checkMatch3())
+            {
+                this.SwapTile(_tile1, _tile2);
+
+            }
+
+            _tile1.SpriteRenderer.color = Color.white;
+            _tile2.SpriteRenderer.color = Color.white;
+            _tile1 = null;
+            _tile2 = null;
+        });
+       
+    }
+
+
+    void SwapTile(Tile tile1, Tile tile2, Action callBack = null)
+    {
+        Vector3 pos1 = tile1.transform.position;
         Vector2 index1 = new Vector2(_tile1._X, _tile1._Y);
-        Vector3 pos2 = _tile2.transform.position;
+        Vector3 pos2 = tile2.transform.position;
         Vector2 index2 = new Vector2(_tile2._X, _tile2._Y);
 
-        _tile1.transform.DOMove(pos2, 0.2f).OnComplete(() =>
-        {
-            _tile1.SpriteRenderer.color = Color.white;
-            _tile1.updateIndex(index2);
-            
-            //check match 3
-        }).Play();
+        tile1.transform.DOMove(pos2, 0.2f).Play();
 
-        _tile2.transform.DOMove(pos1, 0.2f).OnComplete(() =>
+        tile2.transform.DOMove(pos1, 0.2f).OnComplete(() =>
         {
-            _tile2.SpriteRenderer.color = Color.white;
-            _tile2.updateIndex(index1);
-            
-
-            //check match 3
+            tile1.updateIndex(index2);
+            tile2.updateIndex(index1);
+            callBack?.Invoke();
         }).Play();
     }
 
     bool checkMatch3()
     {
+        if (_tile1._ID == _tile1._neighbor[0]._ID && _tile1._ID == _tile1._neighbor[1]._ID)
+            return true;
 
-        _tile1 = null;
-        _tile2 = null;
+        if (_tile1._ID == _tile1._neighbor[2]._ID && _tile1._ID == _tile1._neighbor[3]._ID)
+            return true;
 
-        return true;
+        if (_tile2._ID == _tile2._neighbor[0]._ID && _tile1._ID == _tile2._neighbor[1]._ID)
+            return true;
+
+        if (_tile2._ID == _tile2._neighbor[2]._ID && _tile1._ID == _tile2._neighbor[3]._ID)
+            return true;
+
+        return false;
     }
 
 
