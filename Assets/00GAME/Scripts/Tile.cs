@@ -11,11 +11,12 @@ public class Tile : MonoBehaviour
 
     public SpriteRenderer SpriteRenderer;
 
+
     public List<Tile> _neighbor = new List<Tile>();
      
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         SpriteRenderer = this.GetComponent<SpriteRenderer>();
         _ID = (TypeTile)Random.Range(0, (int)TypeTile.type3+1);
@@ -35,14 +36,19 @@ public class Tile : MonoBehaviour
                 break;
         }
 
-        if(_X - 1  > 0)
-            _neighbor.Add(TileManager.Instant.getTile(_X - 1, _Y));
+        for (int i = 0; i< 4; i++)
+        {
+            _neighbor.Add(null);
+        }
+
+        if (_X - 1 > 0)
+            _neighbor[0] = (TileManager.Instant.getTile(_X - 1, _Y));
         if (_X + 1 < TileManager.Instant._width)
-            _neighbor.Add(TileManager.Instant.getTile(_X + 1, _Y));
+            _neighbor[1] = (TileManager.Instant.getTile(_X + 1, _Y));
         if (_Y - 1 > 0)
-            _neighbor.Add(TileManager.Instant.getTile(_X , _Y - 1));
+            _neighbor[2] = (TileManager.Instant.getTile(_X, _Y - 1));
         if (_Y + 1 < TileManager.Instant._heigh)
-            _neighbor.Add(TileManager.Instant.getTile(_X , _Y + 1));
+            _neighbor[3] = (TileManager.Instant.getTile(_X, _Y + 1));
 
     }
 
@@ -52,13 +58,13 @@ public class Tile : MonoBehaviour
         _Y = (int)index.y;
 
         if (_X - 1 > 0)
-            _neighbor.Add(TileManager.Instant.getTile(_X - 1, _Y));
+            _neighbor[0] = (TileManager.Instant.getTile(_X - 1, _Y));
         if (_X + 1 < TileManager.Instant._width)
-            _neighbor.Add(TileManager.Instant.getTile(_X + 1, _Y));
+            _neighbor[1] = (TileManager.Instant.getTile(_X + 1, _Y));
         if (_Y - 1 > 0)
-            _neighbor.Add(TileManager.Instant.getTile(_X, _Y - 1));
+            _neighbor[2] = (TileManager.Instant.getTile(_X, _Y - 1));
         if (_Y + 1 < TileManager.Instant._heigh)
-            _neighbor.Add(TileManager.Instant.getTile(_X, _Y + 1));
+            _neighbor[3] = (TileManager.Instant.getTile(_X, _Y + 1));
     }
 }
 

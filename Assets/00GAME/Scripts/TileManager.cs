@@ -141,19 +141,68 @@ public class TileManager : Singleton<TileManager>
 
     bool checkMatch3()
     {
-        if (_tile1._ID == _tile1._neighbor[0]._ID && _tile1._ID == _tile1._neighbor[1]._ID)
+        if (checkHorizontalLeft(_tile1) + checkHorizontalRight(_tile1) >= 2)
             return true;
 
-        if (_tile1._ID == _tile1._neighbor[2]._ID && _tile1._ID == _tile1._neighbor[3]._ID)
+        if (checkVerticalUp(_tile1) + checkVerticalDown(_tile1) >= 2)
             return true;
 
-        if (_tile2._ID == _tile2._neighbor[0]._ID && _tile1._ID == _tile2._neighbor[1]._ID)
+        if (checkHorizontalLeft(_tile2) + checkHorizontalRight(_tile2) >= 2)
             return true;
 
-        if (_tile2._ID == _tile2._neighbor[2]._ID && _tile1._ID == _tile2._neighbor[3]._ID)
+        if (checkVerticalUp(_tile2) + checkVerticalDown(_tile2) >= 2)
             return true;
 
         return false;
+    }
+
+
+    int checkHorizontalLeft(Tile tile)
+    {
+        if (tile._neighbor[0] == null)
+            return 0;
+
+        if(tile._ID == tile._neighbor[0]._ID)
+        {
+           return this.checkHorizontalLeft(tile._neighbor[0]) + 1;
+        }
+        return 0;
+    }
+
+    int checkHorizontalRight(Tile tile)
+    {
+        if (tile._neighbor[1] == null)
+            return 0;
+
+        if (tile._ID == tile._neighbor[1]._ID)
+        {
+            return this.checkHorizontalRight(tile._neighbor[1]) + 1;
+        }
+        return 0;
+    }
+
+    int checkVerticalUp(Tile tile)
+    {
+        if (tile._neighbor[3] == null)
+            return 0;
+
+        if (tile._ID == tile._neighbor[3]._ID)
+        {
+            return this.checkVerticalUp(tile._neighbor[3]) + 1;
+        }
+        return 0;
+    }
+
+    int checkVerticalDown(Tile tile)
+    {
+        if (tile._neighbor[2] == null)
+            return 0;
+
+        if (tile._ID == tile._neighbor[2]._ID)
+        {
+            return this.checkVerticalDown(tile._neighbor[2]) + 1;
+        }
+        return 0;
     }
 
 
