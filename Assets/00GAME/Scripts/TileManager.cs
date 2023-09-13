@@ -7,6 +7,7 @@ using System;
 
 public class TileManager : Singleton<TileManager>
 {
+    [SerializeField] Camera _mainCam;
     public int _width, _heigh;
     [SerializeField] Tile _tilePrefab;
     List<Tile> _tiles = new List<Tile>();
@@ -37,6 +38,11 @@ public class TileManager : Singleton<TileManager>
                 _tiles.Add(tmpT);
             }
         }
+
+
+        _mainCam.transform.position = new Vector3((_width - 1)/2f,(_heigh-1)/2f,-10f);
+        float sizeCam = _heigh >= _width ? _heigh / 2f : (_width / _mainCam.aspect) /2f;
+        _mainCam.orthographicSize = sizeCam;
     }
 
 
