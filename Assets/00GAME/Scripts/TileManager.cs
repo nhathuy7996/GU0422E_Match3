@@ -11,7 +11,9 @@ public class TileManager : Singleton<TileManager>
     public int _width, _heigh;
     [SerializeField] Tile _tilePrefab;
     List<Tile> _tiles = new List<Tile>();
+
     Tile _tile1, _tile2;
+    List<Tile> _horizontal = new List<Tile>(), _vertical = new List<Tile>();
     // Start is called before the first frame update
     void Start()
     {
@@ -39,6 +41,10 @@ public class TileManager : Singleton<TileManager>
             }
         }
 
+        foreach (Tile t in _tiles)
+        {
+            t.updateIndex();
+        }
 
         _mainCam.transform.position = new Vector3((_width - 1)/2f,(_heigh-1)/2f,-10f);
         float sizeCam = _heigh >= _width ? _heigh / 2f : (_width / _mainCam.aspect) /2f;
@@ -99,7 +105,7 @@ public class TileManager : Singleton<TileManager>
 
         if (_tile2 == null)
         {
-            _tile1.SpriteRenderer.color = Color.white;
+            _tile1.resetColor();
             _tile1 = null;
             return;
         }
@@ -110,17 +116,30 @@ public class TileManager : Singleton<TileManager>
             if (!checkMatch3())
             {
                 this.SwapTile(_tile1, _tile2);
-
             }
 
-            _tile1.SpriteRenderer.color = Color.white;
-            _tile2.SpriteRenderer.color = Color.white;
+            this.DestroyMatch();
+            
+            _tile1.resetColor();
+            _tile2.resetColor();
             _tile1 = null;
             _tile2 = null;
         });
        
     }
 
+    void DestroyMatch()
+    {
+        foreach(Tile t in _horizontal)
+        {
+            Destroy(t.gameObject);
+        }
+
+        foreach (Tile t in _vertical)
+        {
+            Destroy(t.gameObject);
+        }
+    }
 
     void SwapTile(Tile tile1, Tile tile2, Action callBack = null)
     {
@@ -141,19 +160,31 @@ public class TileManager : Singleton<TileManager>
 
     bool checkMatch3()
     {
-        if (checkHorizontalLeft(_tile1) + checkHorizontalRight(_tile1) >= 2)
-            return true;
+        _horizontal.Clear();
+        _vertical.Clear();
 
-        if (checkVerticalUp(_tile1) + checkVerticalDown(_tile1) >= 2)
-            return true;
+        float sumHorizontal1 = checkHorizontalLeft(_tile1) + checkHorizontalRight(_tile1);
+        float sumVertical1 = checkVerticalUp(_tile1) + checkVerticalDown(_tile1);
 
-        if (checkHorizontalLeft(_tile2) + checkHorizontalRight(_tile2) >= 2)
-            return true;
+        float sumHorizontal2 = checkHorizontalLeft(_tile2) + checkHorizontalRight(_tile2);
+        float sumVertical2 = checkVerticalUp(_tile2) + checkVerticalDown(_tile2);
 
-        if (checkVerticalUp(_tile2) + checkVerticalDown(_tile2) >= 2)
-            return true;
+        if (sumHorizontal1 >= 2)
+            _horizontal.Add(_tile1);
 
-        return false;
+
+        if (sumVertical1 >= 2)
+            _vertical.Add(_tile1);
+
+
+        if (sumHorizontal2 >= 2)
+            _horizontal.Add(_tile2);
+
+
+        if (sumVertical2 >= 2)
+            _vertical.Add(_tile2);
+
+        return sumHorizontal1 >= 2 || sumVertical1 >= 2 || sumHorizontal2 >= 2 || sumVertical2 >= 2;
     }
 
 
@@ -164,6 +195,7 @@ public class TileManager : Singleton<TileManager>
 
         if(tile._ID == tile._neighbor[0]._ID)
         {
+            _horizontal.Add(tile._neighbor[0]);
            return this.checkHorizontalLeft(tile._neighbor[0]) + 1;
         }
         return 0;
@@ -176,6 +208,7 @@ public class TileManager : Singleton<TileManager>
 
         if (tile._ID == tile._neighbor[1]._ID)
         {
+            _horizontal.Add(tile._neighbor[1]);
             return this.checkHorizontalRight(tile._neighbor[1]) + 1;
         }
         return 0;
@@ -188,6 +221,7 @@ public class TileManager : Singleton<TileManager>
 
         if (tile._ID == tile._neighbor[3]._ID)
         {
+            _vertical.Add(tile._neighbor[3]);
             return this.checkVerticalUp(tile._neighbor[3]) + 1;
         }
         return 0;
@@ -200,6 +234,7 @@ public class TileManager : Singleton<TileManager>
 
         if (tile._ID == tile._neighbor[2]._ID)
         {
+            _vertical.Add(tile._neighbor[2]);
             return this.checkVerticalDown(tile._neighbor[2]) + 1;
         }
         return 0;
@@ -208,6 +243,12 @@ public class TileManager : Singleton<TileManager>
 
     public Tile getTile(int x, int y)
     {
+        if (x < 0 || y < 0)
+            return null;
+
+        if (x >= _width || y >= _heigh)
+            return null;
+
         foreach (Tile t in _tiles)
         {
             if (t._X == x && t._Y == y)

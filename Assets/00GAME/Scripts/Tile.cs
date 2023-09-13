@@ -13,7 +13,8 @@ public class Tile : MonoBehaviour
 
 
     public List<Tile> _neighbor = new List<Tile>();
-     
+
+    Color _originColor;
 
     // Start is called before the first frame update
     void Awake()
@@ -25,6 +26,7 @@ public class Tile : MonoBehaviour
         {
             case TypeTile.type1:
                 SpriteRenderer.color = Color.yellow;
+               
                 break;
 
             case TypeTile.type2:
@@ -32,39 +34,42 @@ public class Tile : MonoBehaviour
                 break;
 
             case TypeTile.type3:
-                SpriteRenderer.color = Color.white;
+                SpriteRenderer.color = Color.grey;
                 break;
         }
+
+        _originColor = SpriteRenderer.color;
 
         for (int i = 0; i< 4; i++)
         {
             _neighbor.Add(null);
         }
-
-        if (_X - 1 > 0)
-            _neighbor[0] = (TileManager.Instant.getTile(_X - 1, _Y));
-        if (_X + 1 < TileManager.Instant._width)
-            _neighbor[1] = (TileManager.Instant.getTile(_X + 1, _Y));
-        if (_Y - 1 > 0)
-            _neighbor[2] = (TileManager.Instant.getTile(_X, _Y - 1));
-        if (_Y + 1 < TileManager.Instant._heigh)
-            _neighbor[3] = (TileManager.Instant.getTile(_X, _Y + 1));
-
     }
+
 
     public void updateIndex(Vector2 index)
     {
         _X = (int)index.x;
         _Y = (int)index.y;
 
-        if (_X - 1 > 0)
-            _neighbor[0] = (TileManager.Instant.getTile(_X - 1, _Y));
-        if (_X + 1 < TileManager.Instant._width)
-            _neighbor[1] = (TileManager.Instant.getTile(_X + 1, _Y));
-        if (_Y - 1 > 0)
-            _neighbor[2] = (TileManager.Instant.getTile(_X, _Y - 1));
-        if (_Y + 1 < TileManager.Instant._heigh)
-            _neighbor[3] = (TileManager.Instant.getTile(_X, _Y + 1));
+        updateIndex();
+    }
+
+    public void updateIndex()
+    {
+        _neighbor[0] = (TileManager.Instant.getTile(_X - 1, _Y));
+
+        _neighbor[1] = (TileManager.Instant.getTile(_X + 1, _Y));
+
+        _neighbor[2] = (TileManager.Instant.getTile(_X, _Y - 1));
+
+        _neighbor[3] = (TileManager.Instant.getTile(_X, _Y + 1));
+
+    }
+
+    public void resetColor()
+    {
+        SpriteRenderer.color = _originColor;
     }
 }
 
